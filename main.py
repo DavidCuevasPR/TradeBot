@@ -1,12 +1,15 @@
+import asyncio
 import os
+import sys
 
 import discord
 from discord.utils import find
 from discord.ext import commands
 from dotenv import load_dotenv
 
+from libs import alpha_vantage, database, utils
 
-load_dotenv("token.env")
+load_dotenv(".env")
 token = os.getenv("TOKEN")
 bot = commands.Bot(command_prefix="$",
                    intents=discord.Intents(guilds=True,
@@ -30,14 +33,8 @@ async def on_guild_join(guild):
                                                colour=0xFFAE00).set_thumbnail(url=bot.user.avatar_url))
 
 
-@bot.command()
-async def load(ctx, extension):
-    bot.load_extension(f"cogs.{extension}")
-
-
-if os.listdir("cogs"):
-    for filename in os.listdir("cogs"):
-        if filename.endswith(".py"):
-            bot.load_extension(f"cogs.{filename[:-3]}")
+for filename in os.listdir("cogs"):
+    if filename.endswith(".py"):
+        bot.load_extension(f"cogs.{filename[:-3]}")
 
 bot.run(token)
